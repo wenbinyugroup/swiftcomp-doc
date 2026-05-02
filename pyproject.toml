@@ -1,0 +1,46 @@
+[project]
+name = "swiftcomp-doc"
+version = "0.1.0"
+description = "SwiftComp Documentation"
+readme = "README.md"
+requires-python = ">=3.8.1"
+dependencies = [
+    "sphinx",
+    "sphinx-comments",
+    "sphinx-sitemap",
+    "sphinx-design",
+    "sphinx-gallery",
+    "pydata-sphinx-theme",
+    "sphinx-prompt",
+    "sphinx-copybutton",
+    "sphinx-markdown-builder",
+    "sphinxcontrib-bibtex",
+    "myst-parser",
+    "sphinx-book-theme",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "black",
+    "isort",
+    "flake8",
+]
+
+[tool.uv]
+dev-dependencies = [
+    "pre-commit>=3.0.0",
+    "black>=23.0.0",
+    "isort>=5.0.0",
+    "flake8>=6.0.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+
