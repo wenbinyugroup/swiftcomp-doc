@@ -1,395 +1,176 @@
-# Homogenization Input
 
-## Control parameters
+# Inputs for Homogenization Run
 
-```
-    format_flag          nlayer
-timoshenko_flag    damping_flag    thermal_flag
-     curve_flag    oblique_flag    trapeze_flag    vlasov_flag
-           <k1>            <k2>            <k3>
-        <cos11>         <cos21>
-          nnode           nelem           nmate
-```
+Although general-purpose preprocessors can been developed to prepare SwiftComp input files, it is still beneficial for advanced users, particularly those who want to embed SwiftComp in their own software environments, to understand the meaning of the input data. 
 
-:`format_flag`:
-    Format of the input file.
-    - If it is 1, the input is prepared in the new format
-    - Otherwise, it is prepared in the old format.
+## Extra Inputs for Dimensionally Reducible Structures
 
-:`nlayer`:
-    Number of layers in the section.
-    - If `format_flag` is 1, this should be always given a value greater than 0
-    - This is not used when using the old format.
+To construct a beam/plate/shell model, the beginning of the input file has two extra lines for a plate/shell model, and three extra lines for a beam model.
 
-    ```{note}
-    Here layer is defined as a unique combination of material type and layup orientation, it does not necessarily corresponds to the definition used in the manufacturing sense.
-    For example, even if a section is made of a single isotropic material, we consider it has one layer.
-    ```
-
-:`timoshenko_flag`:
-    Beam model. Choose one from:
-    - 0: Classical model (aka Euler-Bernoulli model).
-    - 1: Classical model and Timoshenko model.
-
-:`damping_flag`:
-    Compute damping matrix. Choose between:
-    - 0: Not compute the damping matrix for the section.
-    - 1: Will compute the damping matrix.
-
-:`thermal_flag`:
-    Carries out thermal analysis. Choose between:
-    - 0: Carry out a pure mechanical analysis.
-    - 3: Carry out a one-way coupled thermoelastic analysis.
-
-:`curve_flag`:
-    Model initially curved and twisted beam. Choose between:
-    - 0: Model initially straight beam.
-    - 1: Model initially curved and twisted beam. Provide three numbers in the very next line: 
-        - `k1`: Twist ($k_1$)
-        - `k2`: Curvature around $x_2$ ($k_2$)
-        - `k3`: Curvature around $x_3$ ($k_3$)
-
-:`oblique_flag`:
-    Model oblique cross-sections. Choose between:
-    - 0: Not oblique cross-section.
-    - 1: Oblique cross-section. Provide two numbers in the following line to specify the orientation of an oblique reference cross-section, see {numref}`fig-oblique` for a sketch of such a cross-section.
-        - `cos11`: Cosine of the angle between normal of the oblique section ($y_1$) and beam axis ($x_1$).
-        - `cos21`: Cosine of the angle between ($y_2$) of the oblique section and beam axis ($x_1$).
-        
-        ```{note}
-        The summation of the square of these two numbers should not be greater than 1.0 in double precision.
-        The inputs including coordinates, material properties, etc. and the outputs including mass matrix, stiffness matrix, etc. are given in the oblique system, the $y_i$ coordinate system as shown in {numref}`fig-oblique`.
-        ```
-        ```{note}
-        This feature is only enabled for the classical beam model.
-        ```
-
-:`trapeze_flag`:
-    Model trapeze effect. Choose between:
-    - 0: Not model trapeze effect.
-    - 1: Model trapeze effect.
-
-:`vlasov_flag`:
-    Obtain Vlasov model. Choose between:
-    - 0: Not obtain Vlasov model.
-    - 1: Obtain Vlasov model.
-    ```{note}
-    This flag can be 1 only if `timoshenko_flag` is 1.
-    VABS will first construct the Timoshenko model, which determines the location of the shear center.
-    If the shear center is not at the origin of the beam coordinate system, VABS will move the origin of beam coordinate system to the shear center and repeat the calculation to obtain the Vlasov model.
-    ```
-
-:`nnode`:
-    Total number of nodes.
-
-:`nelem`:
-    Total number of elements.
-
-:`nmate`:
-    Total number of materials.
-
-
-:::{figure-md} fig-oblique
-![](../../_static/oblique.jpeg)
-
-Sketch of an oblique reference cross-section
-:::
-
-
-
-
-## Mesh
-
-
-The next `nnode` lines are the coordinates for each node arranged as
+### Beam Model
 
 ```
-node_id  x2  x3
+  model
+    k11     k12    k13
+ cos_11  cos_21
 ```
 
-where
+:`model`:
+    Integer. Beam model.
+    - 0: Classical model (Euler-Bernoulli beam model)
+    - 1: Shear refined model (Timoshenko beam model)
+    - 2: Vlasov beam model
+    - 3: Beam model with the trapeze effect
 
-:`node_id`:
-    A positive integer representing the unique number assigned to each node
+:`k11  k12  k13`:
+    Real numbers. Initial twist/curvatures of the structure. If the structure is initially straight, zeroes should be provided instead.
 
-:`x2`:
-    A real number for the $x_2$ location of the node.
-
-:`x3`:
-    A real number for the $x_3$ location of the node.
-
-```{note}
-Although the arrangement of node no is not necessary to be consecutive, every node starting from 1 to `nnode` should be present.
-```
-
-The next `nelem` lines are the connectivity relations.
-Each line list 10 integers for the nodes for each element, which are arranged as:
-```
-elem_id  node_1  node_2  node_3  node_4  node_5  node_6  node_7  node_8  node_9
-```
-
-where
-
-:`elem_id`:
-    Element ID
-
-:`node_1` ... `node_9`:
-    Node IDs of this element.
-    If a node is not present in the element, the value is 0.
-    For a triangular element, set `node_4` to 0.
-    See {numref}`fig-tri_elem` and {numref}`fig-quad_elem` for the VABS numbering convention.
-
-```{note}
-Although the arrangement of elem no is not necessary to be consecutive, every element starting from 1 to `nelem` should be present.
-```
+:`cos_11  cos_21`:
+    Real numbers. Oblique cross-section, see Figure 13 for a sketch of such a cross-section.
+    - `cos_11`: Cosine of the angle between normal of the oblique section ($y_1$) and beam axis $x_{1}$.
+    - `cos_21`: Cosine of the angle between $y_{2}$ of the oblique section and beam axis ($x_{1}$).
+    The summation of the square of these two numbers should not be greater than 1.0 in double precision.
+    The inputs including coordinates, material properties, etc. and the outputs including mass matrix, stiffness matrix, etc. are given in the oblique system, the $y_{i}$ coordinate system as shown in Figure 13.
+    For normal cross-sections, we provide `1.0  0.0` on this line instead.
 
 
-## Element property and orientation
-
-### New format (`format_flag` is 1)
-
-The next `nelem` lines list the layer type and the layer plane angle ($\theta_1$) for each element as:
-```
-elem_id  layer_type  theta_1
-```
-where
-
-:`elem_id`:
-    Element ID
-
-:`layer_type`:
-    A positive integer representing which layer the element belongs to
-
-:`theta_1`:
-    A real number describing the layer plane angle ($\theta_1$) of the element.
-    Here, $\theta_1$ is assumed to be constant for each element, thus it can be calculated at any material point belonging to the element, such as the centroid, or computed as the average of $\theta_1$ of all the points within the element.
-
-    ```{note}
-    For isotropic materials, `theta_1` will not enter the calculations.
-    ```
-
-```{note}
-Although the arrangement of `elem_no` is not necessary to be consecutive, every element starting from 1 to `nelem` should be present.
-```
-
-The next `nlayer` lines define the layers used in the section:
-```
-layer_id  mate_id  theta_3  <damping_layer>
-```
-where
-
-:`layer_id`: 
-    A positive integer denoting the identification number for the layer.
-
-:`mate_id`:
-    A positive integer denoting the material ID used by the layer.
-
-:`theta_3`:
-    A real number denoting the layup orientation.
-
-    For example, if layer 1 is made of material 1 and having $−15^{\circ}$ layup, we will provide the information as `1  1  −15.0`.
-
-:`damping_layer`:
-    A real number denoting the damping coefficient for the layer.
-
-
-### Old format (`format_flag` is not 1)
-
-The next `nelem` lines list the material type and layup parameters for each element as
-```
-elem_id  mate_id  theta_3  theta_1(9)
-```
-where
-
-:`elem_id`:
-    Element ID
-
-:`mate_id`:
-    A positive integer representing the type of the material for the element.
-
-:`theta_3`:
-    A real number representing the layup angle in degrees for this element.
-
-:`theta_1(9)`:
-    An array storing nine real numbers for the layer plane angles at the nodes of this element.
-    For simplification, if the ply orientation can be considered as uniform for this element, `theta_1(1)` stores the layer plane angle and `theta_1(2)` = $540^{\circ}$, and all the rest can be zeros or other real numbers because they do not enter the calculation.
-    If the element has fewer than nine nodes, zeros are to be input for the corresponding missing nodes, as in the case for connectivity.
-
-    ```{note}
-    For isotropic materials, neither `theta_3` nor `theta_1(9)` will enter the calculations.
-    ```
-
-```{note}
-Although the arrangement of `elem_no` is not necessary to be consecutive, every element starting from 1 to `nelem` should be present.
-```
-
-
-## Materials
-
-The next `nmate` blocks defines the material properties:
-```
-mate_id  type
-{CONSTANTS}
-```
-where
-
-:`mate_id`:
-    A positive integer representing the ID of the material.
-
-:`type`:
-    Indicator for the material type. Choose one of the following:
-    - 0: Isotropic
-    - 1: Orthotropic
-    - 2: General anisotropic
-
-:`{CONSTANTS}`:
-    Block of material constants depending on the material type `type`.
-
-### Isotropic materials (`type` is 0)
-
-For isotropic materials, `type` is 0, if `thermal_flag` is 0, there are 3 constants arranged as
-```
-E  nu
-rho
-```
-where `E` is the Young's modulus, `nu` is the Poisson's ratio, and `rho` is the density of the material.
-Poisson's ratio must be greater than -1.0 and less than 0.5 for isotropic materials, although VABS allows users to input values that are very close to those limits.
-
-If `thermal_flag` is 3 and `type` is 0, and there are 4 constants arranged as
-```
-E  nu
-rho
-alpha
-```
-where `alpha` is the coefficient of thermal expansion (CTE).
-
-
-### Orthotropic materials (`type` is 1)
-
-For orthotropic materials, `type` is 1, if `thermal_flag` is 0, there are 10 constants arranged as
-```
- E1    E2    E3
- G12   G13   G23
-nu12  nu13  nu23
-rho
-```
-including the Young's moduli (`E1`, `E2`, and `E3`), the shear moduli (`G12`, `G13`, and `G23`), the Poisson's ratios (`nu12`, `nu13`, and `nu23`), and the mass density (`rho`).
-The convention of values is such that these values will be used to form the following the Hooke's law for composite materials:
-
-$$
-\begin{Bmatrix}
-\varepsilon_{11} \\
-2\varepsilon_{12} \\
-2\varepsilon_{13} \\
-\varepsilon_{22} \\
-2\varepsilon_{23} \\
-\varepsilon_{33}
-\end{Bmatrix} =
-\begin{bmatrix}
-\frac{1}{E_1} & 0 & 0 & -\frac{\nu_{12}}{E_1} & 0 & -\frac{\nu_{13}}{E_1} \\
-0 & \frac{1}{G_{12}} & 0 & 0 & 0 & 0 \\
-0 & 0 & \frac{1}{G_{13}} & 0 & 0 & 0 \\
--\frac{\nu_{12}}{E_1} & 0 & 0 & \frac{1}{E_2} & 0 & -\frac{\nu_{23}}{E_2} \\
-0 & 0 & 0 & 0 & \frac{1}{G_{23}} & 0 \\
--\frac{\nu_{13}}{E_1} & 0 & 0 & -\frac{\nu_{23}}{E_2} & 0 & \frac{1}{E_3}
-\end{bmatrix}
-\begin{Bmatrix}
-\sigma_{11} \\
-\sigma_{12} \\
-\sigma_{13} \\
-\sigma_{22} \\
-\sigma_{23} \\
-\sigma_{33}
-\end{Bmatrix}
-$$
-
-If `thermal_flag` is 3 and `type` is 1, and there are 13 constants arranged as:
-```
-E1  E2  E3
-G12  G13  G23
-nu12  nu13  nu23
-rho
-alpha11  alpha22  alpha33
-```
-where `alpha11`, `alpha22`, `alpha33` are the CTEs along three directions.
-
-### General anisotropic materials (`type` is 2)
-
-For general anisotropic materials, `type` is 2, if `thermal_flag` is 0, there are 22 constants arranged as:
-```
-c11 c12 c13 c14 c15 c16
-    c22 c23 c24 c25 c26
-        c33 c34 c35 c36
-            c44 c45 c46
-                c55 c56
-                    c66
-                    rho
-```
-These values are defined using the following Hooke's law:
-
-$$
-\begin{Bmatrix}
-\sigma_{11} \\
-\sigma_{12} \\
-\sigma_{13} \\
-\sigma_{22} \\
-\sigma_{23} \\
-\sigma_{33}
-\end{Bmatrix} =
-\begin{bmatrix}
-c_{11} & c_{12} & c_{13} & c_{14} & c_{15} & c_{16} \\
-c_{12} & c_{22} & c_{23} & c_{24} & c_{25} & c_{26} \\
-c_{13} & c_{23} & c_{33} & c_{34} & c_{35} & c_{36} \\
-c_{14} & c_{24} & c_{34} & c_{44} & c_{45} & c_{46} \\
-c_{15} & c_{25} & c_{35} & c_{45} & c_{55} & c_{56} \\
-c_{16} & c_{26} & c_{36} & c_{46} & c_{56} & c_{66}
-\end{bmatrix}
-\begin{Bmatrix}
-\varepsilon_{11} \\
-2\varepsilon_{12} \\
-2\varepsilon_{13} \\
-\varepsilon_{22} \\
-2\varepsilon_{23} \\
-\varepsilon_{33}
-\end{Bmatrix}
-$$
-
-If `thermal_flag` is 3 and `type` is 2, there are 28 constants arranged as:
+### Plate/Shell Model
 
 ```
-c11 c12 c13 c14 c15 c16
-    c22 c23 c24 c25 c26
-        c33 c34 c35 c36
-            c44 c45 c46
-                c55 c56
-                    c66
-                    rho
-alpha11  2alpha12  2alpha13  alpha22  2alpha23  alpha33
+  model
+    k12    k21
 ```
-where `alphaij` , with i = 1, 2, 3 and j = 1, 2, 3, are the components of the second-order CTE tensor.
-CTEs corresponding to the shear strains are multiplied by two because the engineering shear strains are twice of the corresponding tensorial shear strains.
-The material constants are expressed in the material coordinate system (see {numref}`fig-local_coord_sys`).
-If the material properties are given in a different coordinate system, or the arrangement of stresses and strains are different from what VABS uses, a proper transformation of the material properties is needed.
 
-If `damping_flag` is 1, a damping coefficient is input on the very next line following the density input.
-For example, if `type`=0 and `thermal_flag`=3 (thermoelastic analysis with isotropic materials), the material constants are arranged as:
-```
-E nu
-rho
-gamma
-alpha
-```
-where `gamma` is a scalar representing the material damping property.
-It is noted that the damping coefficients for each layer and for each material are additive.
-In other words, the total damping coefficient used to scale the stiffness-related matrices is `damping_layer`+`gamma`.
+:`model`:
+    Integer. Plate/shell model.
+    - 0, it will construct a classical model (Euler-Bernoulli beam model or Kirchhoff-Love plate/shell model).
+    - 1, it will construct a shear refined model (Timoshenko beam model or Reissner-Mindlin plate/shell model).
 
-If `thermal_flag` is equal to 3, we also need to provide the following `nnode` lines for temperature for each node arranged as
-```
-node_no  T
-```
-where `node_no` is an integer representing the unique number assigned to each node and `T` is a real number describing the temperature of the node.
-These temperature values can be calculated either from a 3D heat conduction analysis or using VABS Conduction, which is a generalization of the VABS approach for heat conduction analysis.
-Although the arrangement of `node_no` is not necessary to be consecutive, every node starting from 1 to `nnode` should be present.
+:`k12  k21`:
+    Real numbers. Initial twist/curvatures of the structure.
+    If the structure is initially straight, zeroes should be provided instead.
 
-Now, we have prepared all the inputs necessary for performing the homogenization run to compute the inertial properties and structural properties of the cross-section.
 
+## Inputs for All Structural Models
+
+### Control parameters
+
+
+The following line (note: to construct a 3D structural model, the previous three lines do not exist and the input file starts from this line.) has four integers providing the problem control parameters as: 
+
+```
+analysis  elem_flag  trans_flag  temp_flag 
+```
+
+The parameter analysis is an integer denoting the type of analysis: 0-elastic; 1-thermoelastic; 2- conduction; 3-piezoeletric/piezomagnetic; 4-thermopiezoeletric/thermopiezomagnetic; 5-piezoeletromagnetic; 6-thermopiezoeletromagnetic; 7-viscoelastic; 8-thermoviscoelastic; 9-homogenization to 
+
+![image](notes/dev/sc/_resources/44b3576b2055f3d1cfc0ab4470b03d87_MD5.jpg)
+
+
+
+Figure 13: Sketch of an oblique reference cross-section.
+
+
+8-node 3D element; 10- homogenization to 20-node 3D element. It is pointed out here that piezoelectric effects are mathematically equivalent to piezomagnetic effects. In other words, the same equation or code used for modeling piezoelectric materials can be used to model piezomagnetic materials if we replace electric displacement $D _ { i }$ with magnetic induction $B _ { i }$ , electric field $E _ { i }$ with magnetic field $H _ { i }$ , piezoelectric properties $e _ { k i j }$ with piezomagnetic properties $q k i j$ , pyroelectric properties $p _ { i }$ with pyromagnetic properties $m _ { i }$ . Later, for analysis=3 or 4, in the inputs we used piezoelectric materials as example. It is directly applicable to piezomagnetic materials. 
+
+The parameter elem flag is an integer denoting the type of elements. If elem flag is equal to 0, the regular elements as shown in Figures 8, 9, 10 will be used for 1D, 2D or 3D SGs. If it is equal to 1, elements with one dimension degenerated will be used to model the SG. For example, 2D shell elements based on relative degrees of freedom will be used to mesh a 3D SG or 1D elements will be used to mesh a 2D SG. If it is equal to 2, 1D elements will be used to mesh a 3D SG. For example, 1D beam elements can be used to model a 3D SG composed of slender truss-like members. Currently only regular elements are implemented. 
+
+The parameter trans flag is an integer denoting whether transformation of the element orientation is needed. If trans flag is equal to 0, element orientation is the same as the problem coordinate system and transformation is not needed. If it is equal to 1, elemental coordinate systems are defined for each element and elemental orientations will be provided in a later block for the transformation. 
+
+The parameter temp flag is an integer denoting whether the temperature is uniform within the SG. For thermally coupled analysis (analysis=1, 4, $\boldsymbol { \mathit { 6 } }$ ), if temp flag is equal to 0, temperature distribution within SG is uniform; if it is equal to 1, temperature distribution is not uniform and nodal temperature should be provided to describe the temperature field. Note this input is used only if it is a thermally coupled analysis. 
+
+If analysis=7 or 8, the next line will list three real numbers arranged as: 
+
+$t _ { 0 }$ , $t _ { e }$ , dt 
+
+where $t _ { 0 }$ is the starting time, $t _ { e }$ is the ending time, and $d t$ is the increment of time. Note, in the current version we follow the conventional practice of thermoviscoelastic analysis. The real time ranges from $1 0 ^ { t _ { 0 } }$ to $1 0 ^ { t _ { e } }$ with time increment of $1 0 ^ { d t }$ . The code will compute time-dependent effective properties at $1 0 ^ { t _ { 0 } } , 1 0 ^ { t 0 + d t } , \ldots , 1 0 ^ { t _ { e } }$ . 
+
+If the SG is aperiodic or partially periodic, the next line will list three integers arranged as: 
+
+py1 py2 py3 
+
+where py1, py2 py3 could be 1, or 0 indicating whether it is aperiodic or periodic along $y _ { 1 } , y _ { 2 } , y _ { 3 }$ directions, respectively. For example, for a 3D SG which is aperiodic along $y _ { 2 }$ direction, we will have 
+
+0 1 0 
+
+It noted that for the 2D plate/shell model, only $y _ { 1 }$ or $y _ { 2 }$ can be periodic or aperiodic and for the 1D beam model, only $y _ { 1 }$ can be periodic or aperiodic. 
+
+The next line lists six integers arranged as: 
+
+nSG nnode nelem nmate nslave nlayer nsurf nodes 
+
+where $n S G$ is the dimensionality of the SG, nnode is the total number of nodes, nelem is the total number of elements, nmate is the total number of material types, nslave is the number of slave nodes on periodic boundaries for periodic microstructures, and nlayer is the total number of layers defined by different types of materials and layup angle. nsurf nodes is the total number of nodes for the outside surfaces of the SG. For the current version, nsurf nodes is only implemented for analysis=9 or 10. If nslave= $\boldsymbol { \mathit { 0 } }$ , SwiftComp will search for corresponding node on periodic boundaries. For this reason, the SG must be regular rectangles (for 2D SG) or cuboids (for 3D SG) with the FE mesh having corresponding nodes on periodic edges. For other periodic SG shapes, the paired nodes on corresponding boundaries must be provided through setting nslave not equal to zero. 
+
+### Mesh
+
+The next nnode lines are the coordinates for each node arranged as: 
+
+```
+node_no  y1  y2  y3 
+```
+
+where node no is an integer representing the unique number assigned to each node and $y _ { 1 }$ , $y _ { 2 }$ , y3 are three real numbers describing the location $( y _ { 1 } , y _ { 2 } , y _ { 3 } )$ of the node (only $y _ { 3 }$ exists for 1D SGs, and $y _ { 2 }$ and $y _ { 3 }$ exist for 2D SGs). Arrangement of node no is not necessary to be consecutive, but all nodes from 1 to nnode should be present. 
+
+The next nelem lines list the layer number and nodes for each element. They are arranged as:
+
+```
+elem_no  mate_id  node_1  node_2 ...
+```
+
+where elem no is the number of element, mate id is an integer to indicate the material number of 
+
+the element, and node i ( $i = 1 , 2 , \dots ,$ ) are nodes belonging to this element. If nlayer is not equal to zero, then mate id should be replaced with layer id which will be defined later. Arrangement of elem no is not necessary to be consecutive, but all elements starting from 1 to nelem should be present. If the SG is meshed using regular elements (e.g., elements having the same dimension as the SG, 
+
+• 1D elements could have up to 5 nodes. If a node is not present in the element, the value is 0; see Figure 8. 
+
+• 2D elements could have up to 9 nodes. If a node is not present in the element, the value is 0. If the fourth node is zero, it is a triangular element; see Figure 9. 
+
+• 3D elements could have up to 20 nodes. If a node is not present in the element, the value is 0. If the fifth node is zero, it is a tetrahedral element; If the fifth node is not zero, but the seventh node is zero, it is a wedge element; see Figure 10. 
+
+If trans flag is equal to 1, the next nelem lines list the orientation for each element. They are arranged as 
+
+elem no $a _ { 1 } \ a _ { 2 } \ a _ { 3 } \ b _ { 1 } \ b _ { 2 } \ b _ { 3 } \ c _ { 1 } \ c _ { 2 } \ c _ { 3 }$ 
+
+where elem no is the number of element, $a _ { 1 } , a _ { 2 } , a _ { 3 }$ are coordinates of point $a$ , $b _ { 1 } , b _ { 2 } , b _ { 3 }$ are coordinates of point $b$ , $c _ { 1 } , c _ { 2 } , c _ { 3 }$ are coordinates of point $c$ . The local coordinate system for the element is defined by the three points $a , b , c$ as described previously. Arrangement of elem no is not necessary to be consecutive, but all elements starting from 1 to nelem should be present. 
+
+If temp flag is equal to 1, the temperature distribution within the SG is not uniform, the next nnode lines list the corresponding nodal temperature. They are arranged as: 
+
+node no $T$ 
+
+where node no is the nodal number and $T$ is the corresponding temperature. 
+
+If analysis is equal to 9, the next line lists the nodes of the macroscopic 3D 8-node element. They are arranged as: 
+
+node 1 node 2 node 3 . . . node 8 
+
+where $n o d e _ { i }$ corresponds to the 8 nodes of the macroscopic 3D 8-node element numbered in the same order as those in Figure 10. 
+
+If analysis is equal to 10, the next line lists the nodes of the macroscopic 3D 20-node element. They are arranged as: 
+
+node 1 node 2 node 3 . . . node 20 
+
+where nodei corresponds to the 20 nodes of the macroscopic 3D 20-node element numbered in the same order as those in Figure 10. 
+
+If analysis is equal to 9 or 10, the next one or more lines list the nodes on the surfaces. The total number of surface nodes is nsurf nodes. No specific format is needed. 
+
+If nslave is not equal to 0, the next nslave lines list the slave nodes and corresponding master nodes periodic to the slave nodes. They are arranged as: 
+
+slave node master node 
+
+where slave node is an integer indicating the node slaved to the master node denoted by master node. 
+
+If nlayer is not equal to 0, the next nlayer lines list the definition for each layer. They are arranged as: 
+
+layer id mate id angle 
+
+where layer id is the layer number, mate id is the material type, and angle is a real number for the layup angle in degrees. 
+
+
+
+[materials](sc-inputs-homo-material.md)
+
+
+
+The following line is used to input $\omega$ , the volume of the domain spanned by the remaining coordinates in the macroscopic structural model. For 3D structural models, $\omega$ will be the volume of the homogenized material including both the volume of the material and the volume of possible voids in the SG. $\omega$ can be computed by any mesh generator. For regular SG such as cubes, it can be easily calculated by hand. Of course, for 1D SGs, the volume is the length and for 2D SGs, the volume is the area. For plate/shell models, $\omega$ will be the area spanned by $y _ { 1 }$ and $_ { y 2 }$ for 3D SGs, the length along $y _ { 2 }$ for 2D SGs and 1.0 for 1D SGs. For beam models, $\omega$ will be the length along $y _ { 1 }$ for 3D SGs and 1.0 for 2D SGs. 
+
+Till now, we have prepared all the inputs necessary for the homogenization run. 

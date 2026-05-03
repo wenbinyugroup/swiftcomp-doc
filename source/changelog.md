@@ -38,7 +38,7 @@ The pointwise anisotropic heterogeneity is enabled in SwiftComp 1.1. The SG can 
 
 ## Version 1.0
 
-Starting SwiftComp 1.0, two versions of SwiftComp are available: SwiftComp Standard and SwiftCompTM Professional.
+Starting SwiftComp 1.0, two versions of SwiftComp are available: SwiftComp Standard and SwiftComp Professional.
 In SwiftComp Professional, a direct sparse solver is used to deal with big models which could have as many as millions of degrees of freedom.
 A parallel edition is also available for SwiftComp Professional.
 For a problem that SwiftComp Professional runs more than a few minutes, it is better to use the parallel edition as it can exploit multiple cores which are readily available on most computers nowadays.

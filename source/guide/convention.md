@@ -1,53 +1,81 @@
 # Conventions
 
 
-To understand the inputs and interpret outputs of the program correctly, we need to explain some conventions used in SwiftCompTM. 
+To understand the inputs and interpret outputs of the program correctly, we need to explain some conventions used in SwiftComp.
 
-# 6.1 Elements
+## Elements
 
+SwiftComp meshes 1D SGs using two-node, three-node, four-node, or five-node elements for as shown in [](#fig-1d-element-nodal-numbering).
+Nodes 3, 4, 5 are optional and one or more of these nodes can be missing for a valid 1D element.
+It is recommended to use 2-node elements for 3D structures with a 1D SG (see Figure 3a) and 5-node elements for 2D plate/shell models with a 1D SG (see Figure 5a). 
 
-![image](_resources/964cbe4c26228bfd9b3c3072fa74a15c_MD5.jpg)
-![image](_resources/c456b0e7ece076cf5f7ce780169a4d5d_MD5.jpg)
-Figure 8: 1D element nodal numbering.
+:::{figure-md} fig-1d-element-nodal-numbering
+![](../_static/1d-element-nodal-numbering.png)
 
-![image](_resources/2cd0f2fa6d76250e3543cbe8b08063af_MD5.jpg)
-![image](_resources/af6d944c42987e9c00a17b315d2c250c_MD5.jpg)
-Figure 9: 2D element nodal numbering.
+1D element nodal numbering.
+:::
 
+SwiftComp meshes 2D SGs using either triangular or quadrilateral elements as shown in Figure 9.
+It is also shown in the figure that SwiftComp numbers the nodes of each 2D elements in the counterclockwise direction.
+Nodes 1, 2, and 3 of the triangular elements and nodes 1, 2, 3, and 4 of the quadrilateral elements are at the corners.
+For triangular element, the fourth node is zero to inform SwiftComp that it is a triangular element.
+Nodes 5, 6, 7 of the triangular elements and nodes 5, 6, 7, 8, 9 of quadrilateral elements are optional.
+Any one or more of these nodes can be missing for a valid 2D element. 
 
-SwiftCompTM meshes 1D SGs using two-node, three-node, four-node, or five-node elements for as shown in Figure 8. Nodes 3, 4, 5 are optional and one or more of these nodes can be missing for a valid 1D element. It is recommended to use 2-node elements for 3D structures with a 1D SG (see Figure 3a) and 5-node elements for 2D plate/shell models with a 1D SG (see Figure 5a). 
+:::{figure-md} fig-2d-element-nodal-numbering
+![](../_static/2d-element-nodal-numbering.png)
 
-SwiftCompTM meshes 2D SGs using either triangular or quadrilateral elements as shown in Figure 9. It is also shown in the figure that SwiftCompTM numbers the nodes of each 2D elements in the counterclockwise direction. Nodes 1, 2, and 3 of the triangular elements and nodes 1, 2, 3, and 4 of the quadrilateral elements are at the corners. For triangular element, the fourth node is zero to inform SwiftCompTM that it is a triangular element. Nodes 5, 6, 7 of the triangular elements and nodes 5, 6, 7, 8, 9 of quadrilateral elements are optional. Any one or more of these nodes can be missing for a valid 2D element. 
+2D element nodal numbering.
+:::
 
-SwiftComp $^ \mathrm { { 4 M } }$ meshes 3D SGs using tetrahedral elements, brick elements, or wedge elements as shown in Figure 10. For tetrahedral elements, the fifth node is zero to inform SwiftCompTM that it is a tetrahedral element. For wedge elements, the seventh node is zero to inform SwiftCompTM that it is a wedge element. The nodes other than the corners are optional. Any one or more of these nodes can be missing for a valid 3D element. 
+SwiftComp meshes 3D SGs using tetrahedral elements, brick elements, or wedge elements as shown in Figure 10.
+For tetrahedral elements, the fifth node is zero to inform SwiftComp that it is a tetrahedral element.
+For wedge elements, the seventh node is zero to inform SwiftComp that it is a wedge element.
+The nodes other than the corners are optional.
+Any one or more of these nodes can be missing for a valid 3D element.
 
-![image](_resources/80829d3ffd9e9c05a80d15c32185025a_MD5.jpg)
-Figure 10: 3D element nodal numbering.
+:::{figure-md} fig-3d-element-nodal-numbering
+![](../_static/3d-element-nodal-numbering.png)
 
-
-# 6.2 Local Coordinate System, Elemental Coordinate System, and Material Coordinate System
-
-![image](_resources/6b42f9c580a25670aaee1b3dc281723d_MD5.jpg)
-Figure 11: Local coordinate system describing SG.
-
-
-First, SwiftCompTM uses a right-hand Cartesian coordinate system, also called the local coordinate system, denoted as $y _ { 1 } , y _ { 2 }$ and $y _ { 3 }$ , to describe a 3D SG, $y _ { 2 }$ and $y _ { 3 }$ to describe a 2D SG, and $y _ { 3 }$ to describe a 1D SG (see Figure 11). $y _ { 1 } , y _ { 2 } , y _ { 3 }$ are parallel to the global coordinates $x _ { 1 } , x _ { 2 } , x _ { 3 }$ , respectively. The global coordinates $x _ { 1 } , x _ { 2 } , x _ { 3 }$ are used to describe the original structure and the macroscopic structure. Note that if the material properties are provided in a coordinate system different from $y _ { 1 } , y _ { 2 } , y _ { 3 }$ , an additional coordinate system called the material coordinate system should be defined and a transformation of the material properties from the material coordinate system into those expressed in the local coordinate system is automatically carried out by SwiftCompTM. 
-
-In SwiftComp $^ \mathrm { { 4 M } }$ , an elemental coordinate system $y _ { i } ^ { \prime }$ can be defined for each element denoted by three points $a , b , c$ , with the line from point $c$ to point $a$ denoting $y _ { 1 } ^ { \prime }$ direction and the line from point $c$ to point $b$ denoting a line located in the $y _ { 1 } ^ { \prime } - y _ { 2 } ^ { \prime }$ plane; see Figure 12 for a sketch. Speaking in the language of vectors, the new coordinate system is defined by three points with position vectors in the local coordinate system ( $y _ { i }$ with $\hat { e } _ { i }$ as the unit vectors) by $\textbf { \em u }$ , $^ { b }$ , $\mathbf { c }$ . ${ \mathbf { } } a - c$ denotes $\hat { \boldsymbol { e } } _ { 1 } ^ { \prime }$ , $b - c$ is a vector in the $y _ { 1 } ^ { \prime } - y _ { 2 } ^ { \prime }$ plane. With this information, one can compute the direction cosine matrix relating $y _ { i }$ to $y _ { i } ^ { \prime }$ according to the following steps: 
-
-- Obtain $\hat { \boldsymbol { e } } _ { 1 } ^ { \prime }$ through normalization of ${ \mathbf { } } a - c$ : $\hat { \boldsymbol { e } } _ { 1 } ^ { \prime } = \frac { \boldsymbol { a } - \boldsymbol { c } } { | \boldsymbol { a } - \boldsymbol { c } | }$ ; ; 
-
-- Obtain $\hat { \boldsymbol { e } } _ { 3 } ^ { \prime }$ through normalization of the cross product of $\hat { \boldsymbol { e } } _ { 1 } ^ { \prime }$ and $b - c$ : $\hat { \boldsymbol { e } } _ { 3 } ^ { \prime } = \frac { \hat { \boldsymbol { e } } _ { 1 } ^ { \prime } \times ( \pmb { b } - \pmb { c } ) } { | \hat { \pmb { e } } _ { 1 } ^ { \prime } \times ( \pmb { b } - \pmb { c } ) | }$ ; 
-
-- Obtain $\hat { \boldsymbol { e } } _ { 2 } ^ { \prime }$ through the cross product of $\hat { \boldsymbol { e } } _ { 3 } ^ { \prime }$ and $\hat { \boldsymbol { e } } _ { 1 } ^ { \prime }$ : $\hat { \pmb { e } } _ { 2 } ^ { \prime } = \hat { \pmb { e } } _ { 3 } ^ { \prime } \times \hat { \pmb { e } } _ { 1 } ^ { \prime }$ 
-
-SwiftCompTM allows the user to define the material properties in the local coordinate system $y _ { i }$ or in the material coordinate system. The material coordinate system could be the elemental coordinate system or a coordinate system defined in such a way that it can be obtained by a simple rotation about $y _ { 3 } ^ { \prime }$ of the elemental coordinate system. Clearly for composite laminates, this simple rotation corresponds to the layup angle. 
-
-![image](_resources/5a8d1b762963f7bd4d37dd1800f1457d_MD5.jpg)
-Figure 12: Elemental coordinate system defined by three points.
+3D element nodal numbering.
+:::
 
 
-# 6.3 Constituent Constitutive Models
+## Local Coordinate System, Elemental Coordinate System, and Material Coordinate System
+
+First, SwiftComp uses a right-hand Cartesian coordinate system, also called the *local coordinate system*, denoted as $y_1$, $y_2$ and $y_3$, to describe a 3D SG, $y_{2}$ and $y_{3}$ to describe a 2D SG, and $y_{3}$ to describe a 1D SG (see Figure 11).
+$y_{1}$, $y_{2}, and $y_{3}$ are parallel to the *global coordinates* $x_{1}$, $x_{2}, and $x_{3}$, respectively.
+The global coordinates $x_{1}$, $x_{2}$, and $x_{3}$ are used to describe the original structure and the macroscopic structure.
+Note that if the material properties are provided in a coordinate system different from $y_{1}$, $y_{2}$, $y_{3}$, an additional coordinate system called the *material coordinate system* should be defined and a transformation of the material properties from the material coordinate system into those expressed in the local coordinate system is automatically carried out by SwiftComp.
+
+:::{figure-md} fig-local-coordinate-system
+![](../_static/6b42f9c580a25670aaee1b3dc281723d_MD5.jpg)
+
+Local coordinate system describing SG.
+:::
+
+In SwiftComp, an elemental coordinate system $y_{i}^{\prime}$ can be defined for each element denoted by three points $a$, $b$, $c$, with the line from point $c$ to point $a$ denoting $y_{1}^{\prime}$ direction and the line from point $c$ to point $b$ denoting a line located in the $y_{1}^{\prime}$-$y_{2}^{\prime}$ plane; see Figure 12 for a sketch.
+Speaking in the language of vectors, the new coordinate system is defined by three points with position vectors in the local coordinate system ( $y_{i}$ with $\hat{\mathbf{e}}_{i}$ as the unit vectors) by $\mathbf{a}$, $\mathbf{b}$, and $\mathbf{c}$.
+$\mathbf{a}-\mathbf{c}$ denotes $\hat{\mathbf{e}}_{1}^{\prime}$, $\mathbf{b}-\mathbf{c}$ is a vector in the $y_{1}^{\prime}$-$y_{2}^{\prime}$ plane.
+With this information, one can compute the direction cosine matrix relating $y_{i}$ to $y_{i}^{\prime}$ according to the following steps: 
+
+- Obtain $\hat{\mathbf{e}}_{1}^{\prime}$ through normalization of $\mathbf{a} - \mathbf{c}$: $\hat{\mathbf{e}}_{1}^{\prime} = \frac{\mathbf{a}-\mathbf{c}}{|\mathbf{a}-\mathbf{c}|}$;
+- Obtain $\hat{\mathbf{e}}_{3}^{\prime}$ through normalization of the cross product of $\hat{\mathbf{e}}_{1}^{\prime}$ and $\mathbf{b}-\mathbf{c}$: $\hat{\mathbf{e}}_{3}^{\prime} = \frac{\hat{\mathbf{e}}_{1}^{\prime} \times (\mathbf{b} - \mathbf{c})}{|\hat{\mathbf{e}}_{1}^{\prime} \times (\mathbf{b} - \mathbf{c})|}$;
+- Obtain $\hat{\mathbf{e}}_{2}^{\prime}$ through the cross product of $\hat{\mathbf{e}}_{3}^{\prime}$ and $\hat{\mathbf{e}}_{1}^{\prime}$: $\hat{\mathbf{e}}_{2}^{\prime} = \hat{\mathbf{e}}_{3}^{\prime} \times \hat{\mathbf{e}}_{1}^{\prime}$
+
+
+:::{figure-md} fig-elemental-coordinate-system
+![](../_static/5a8d1b762963f7bd4d37dd1800f1457d_MD5.jpg)
+
+Elemental coordinate system defined by three points.
+:::
+
+SwiftComp allows the user to define the material properties in the local coordinate system $y_{i}$ or in the material coordinate system.
+The material coordinate system could be the elemental coordinate system or a coordinate system defined in such a way that it can be obtained by a simple rotation about $y_{3}^{\prime}$ of the elemental coordinate system.
+Clearly for composite laminates, this simple rotation corresponds to the layup angle. 
+
+
+## Constituent Constitutive Models
 
 Generally speaking, the constituents contained in a SG could be responsive to thermal, mechanical, electric, and magnetic fields. If these effects are not coupled, the linear elastic behavior can be modeled using the Hooke’s law in Eq. (3). 
 
@@ -57,9 +85,12 @@ $$
 \left\{ \begin{array}{l} q _ {1} \\ q _ {2} \\ q _ {3} \end{array} \right\} = - \left[ \begin{array}{c c c} k _ {1 1} & k _ {1 2} & k _ {1 3} \\ k _ {1 2} & k _ {2 2} & k _ {2 3} \\ k _ {1 3} & k _ {2 3} & k _ {3 3} \end{array} \right] \left\{ \begin{array}{l} T _ {, 1} \\ T _ {, 2} \\ T _ {, 3} \end{array} \right\} \tag {25}
 $$
 
-where $q _ { i }$ is the heat flux, $k _ { i j }$ is the conductivity, and $T _ { , i }$ is the gradient of the temperature $T$ . Since conduction is mathematically analogous to electrostatics, magnetostatics, and diffusion, SwiftCompTM can also be used to predict effective dielectric, magnetic, and diffusive properties of composite materials and the corresponding local fields. For example, to obtain the effective dielectric properties, we just need to let $q _ { i }$ denote the electric displacements, $T$ denote the electric potential, and $k _ { i j }$ denote the corresponding dielectric properties. 
+where $q _ { i }$ is the heat flux, $k _ { i j }$ is the conductivity, and $T _ { , i }$ is the gradient of the temperature $T$ .
+Since conduction is mathematically analogous to electrostatics, magnetostatics, and diffusion, SwiftComp can also be used to predict effective dielectric, magnetic, and diffusive properties of composite materials and the corresponding local fields.
+For example, to obtain the effective dielectric properties, we just need to let $q _ { i }$ denote the electric displacements, $T$ denote the electric potential, and $k _ { i j }$ denote the corresponding dielectric properties. 
 
-For coupled mutliphysics modeling, we will have piezoelectric and piezomagnetic effects as well as pyroelectric, pyromagnetic, and electromagnetic effects. For linear behavior among all these fields, the constitutive equations can be expressed as: 
+For coupled mutliphysics modeling, we will have piezoelectric and piezomagnetic effects as well as pyroelectric, pyromagnetic, and electromagnetic effects.
+For linear behavior among all these fields, the constitutive equations can be expressed as: 
 
 $$
 \sigma_ {i j} = C _ {i j k l} \varepsilon_ {k l} - e _ {k i j} E _ {k} - q _ {k i j} H _ {k} + \Lambda_ {i j} \theta
@@ -73,13 +104,14 @@ $$
 B _ {i} = q _ {i k l} \varepsilon_ {k l} + a _ {i k} E _ {k} + \mu_ {i k} H _ {k} + m _ {i} \theta
 $$
 
-where $C _ { i j k l }$ , $e _ { k i j }$ , $q k i j$ , and $\Lambda _ { i j }$ are the elastic, the piezoelectric, the piezomagnetic, and the thermal stress tensors, respectively (note that $\Lambda _ { i j } = - C _ { i j k l } \alpha _ { k l }$ with $\alpha _ { k l }$ as the thermal expansion tensor); $\sigma _ { i j }$ and $\varepsilon _ { i j }$ are the stress tensor and strain tensor, respectively; $k _ { i k }$ , $a _ { i k }$ , and $\mu _ { i k }$ are the dielectric, electromagnetic, and magnetic permeability tensors, respectively; and $p _ { i }$ and $m _ { i }$ are the pyroelectric and pyromagnetic vectors, and $D _ { i }$ , $E _ { k }$ , $B _ { i }$ , and $H _ { k }$ are the electric displacement, electric field, magnetic induction, and magnetic field vectors, respectively. $\theta$ denotes the difference between the actual temperature and the reference temperature. SwiftComp $^ \mathrm { r } \mathrm { { 1 1 } } \mathrm { { M } }$ does not restrict $\theta$ to be small. If $\theta$ is not small, $\Lambda _ { i j } , p _ { i } , m _ { i }$ are not the tangent or instantaneous properties, but the secant properties which are defined as average over a change of temperature. For example, let $\alpha _ { t } ( T )$ denote the tangent or instantaneous coefficient of thermal expansion (CTE), the secant CTE is defined as 
+where $C _ { i j k l }$ , $e _ { k i j }$ , $q k i j$ , and $\Lambda _ { i j }$ are the elastic, the piezoelectric, the piezomagnetic, and the thermal stress tensors, respectively (note that $\Lambda _ { i j } = - C _ { i j k l } \alpha _ { k l }$ with $\alpha _ { k l }$ as the thermal expansion tensor); $\sigma _ { i j }$ and $\varepsilon _ { i j }$ are the stress tensor and strain tensor, respectively; $k _ { i k }$ , $a _ { i k }$ , and $\mu _ { i k }$ are the dielectric, electromagnetic, and magnetic permeability tensors, respectively; and $p _ { i }$ and $m _ { i }$ are the pyroelectric and pyromagnetic vectors, and $D _ { i }$ , $E _ { k }$ , $B _ { i }$ , and $H _ { k }$ are the electric displacement, electric field, magnetic induction, and magnetic field vectors, respectively. $\theta$ denotes the difference between the actual temperature and the reference temperature.
+SwiftComp $^ \mathrm { r } \mathrm { { 1 1 } } \mathrm { { M } }$ does not restrict $\theta$ to be small. If $\theta$ is not small, $\Lambda _ { i j } , p _ { i } , m _ { i }$ are not the tangent or instantaneous properties, but the secant properties which are defined as average over a change of temperature. For example, let $\alpha _ { t } ( T )$ denote the tangent or instantaneous coefficient of thermal expansion (CTE), the secant CTE is defined as 
 
 $$
 \alpha (T) = \frac {1}{T - T _ {1}} \int_ {T _ {1}} ^ {T} \alpha_ {t} (\zeta) d \zeta = \frac {1}{\theta} \int_ {T _ {1}} ^ {T _ {1} + \theta} \alpha_ {t} (\zeta) d \zeta \tag {27}
 $$
 
-with $T _ { 1 }$ as the reference temperature and $\theta = T - T _ { 1 }$ . For convenience, SwiftCompTM uses tangent or instantaneous properties for $\alpha _ { i j } , p _ { i } , m _ { i }$ as inputs and computes the secant properties internally for constitutive modeling of temperature dependent properties. 
+with $T _ { 1 }$ as the reference temperature and $\theta = T - T _ { 1 }$ . For convenience, SwiftComp uses tangent or instantaneous properties for $\alpha _ { i j } , p _ { i } , m _ { i }$ as inputs and computes the secant properties internally for constitutive modeling of temperature dependent properties. 
 
 Linear multiphysics behavior is modeled based on the following energy functional corresponding to the constitutive equation in Eq. (26): 
 
@@ -153,4 +185,4 @@ $$
 B = q ^ {T} \varepsilon + a ^ {* T} E ^ {*} + \mu^ {*} H ^ {*} + m \theta
 $$
 
-with $\begin{array} { r } { \sigma ^ { * } = \frac { \sigma } { 1 0 ^ { 9 } } } \end{array}$ . For SwiftComp $^ \mathrm { { 4 M } }$ to perform multiphysics homogenization, we input $C ^ { \ast } , c _ { v } ^ { \ast } , e , q , k ^ { \ast }$ $a ^ { * } , \mu ^ { * } , \alpha , p , m$ as material properties, and for SwiftCompTM to perform multiphysics dehomogenization, we input $\varepsilon , E ^ { * } , H ^ { * }$ as the global fields. In other words, if the quantities are given in IS units, we need to divide $C , c _ { v } , E , H$ by $1 0 ^ { 9 }$ , and multiply $k , a , \mu$ by $1 0 ^ { 9 }$ , and all the other quantities remain the same. The output effective properties are also scaled the same way as the input material properties. As far as the local fields out of dehomogenization are concerned, the mechanical displacement, strains, electric displacements, and magnetic induction are the same as SI units, however one needs to multiply the electromagnetic potential, the stresses, electric and magnetic fields with $1 0 ^ { 9 }$ to convert these quantities in SI units. Note, it is just one suggestion for users to scale SwiftCompTM inputs to avoid numerical difficulties. This scaling is done externally by the end user of the code. One can certainly devise a different scaling following the same idea given here. 
+with $\begin{array} { r } { \sigma ^ { * } = \frac { \sigma } { 1 0 ^ { 9 } } } \end{array}$ . For SwiftComp $^ \mathrm { { 4 M } }$ to perform multiphysics homogenization, we input $C ^ { \ast } , c _ { v } ^ { \ast } , e , q , k ^ { \ast }$ $a ^ { * } , \mu ^ { * } , \alpha , p , m$ as material properties, and for SwiftComp to perform multiphysics dehomogenization, we input $\varepsilon , E ^ { * } , H ^ { * }$ as the global fields. In other words, if the quantities are given in IS units, we need to divide $C , c _ { v } , E , H$ by $1 0 ^ { 9 }$ , and multiply $k , a , \mu$ by $1 0 ^ { 9 }$ , and all the other quantities remain the same. The output effective properties are also scaled the same way as the input material properties. As far as the local fields out of dehomogenization are concerned, the mechanical displacement, strains, electric displacements, and magnetic induction are the same as SI units, however one needs to multiply the electromagnetic potential, the stresses, electric and magnetic fields with $1 0 ^ { 9 }$ to convert these quantities in SI units. Note, it is just one suggestion for users to scale SwiftComp inputs to avoid numerical difficulties. This scaling is done externally by the end user of the code. One can certainly devise a different scaling following the same idea given here. 
