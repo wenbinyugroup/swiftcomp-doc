@@ -14,14 +14,14 @@ SwiftComp INPUTFILE MACRODIM ANALYSIS [INTEGRATION]
 
 **Required**
 
-:INPUTFILE: The name of the input file.
+:`INPUTFILE`: The name of the input file.
 
-:MACRODIM: Macroscopic model to be constructed. Choose from
+:`MACRODIM`: Macroscopic model to be constructed. Choose from
     - 1D: Beam model
     - 2D: Plate/shell model
     - 3D: 3D model
 
-:ANALYSIS: The type of analysis to be performed. Choose from
+:`ANALYSIS`: The type of analysis to be performed. Choose from
     - H: Homogenization
     - L: Dehomogenization
     - LG: Dehomogenization with local results written in Gmsh format
@@ -34,7 +34,7 @@ SwiftComp INPUTFILE MACRODIM ANALYSIS [INTEGRATION]
 
 **Optional**
 
-:INTEGRATION: Whether to use reduced integration for certain elements
+:`INTEGRATION`: Whether to use reduced integration for certain elements
     - If not provided, full integration will be used
     - R: Reduced integration will be used
 

@@ -3,13 +3,12 @@
 
 
 ```{toctree}
-:maxdepth: 3
+:maxdepth: 2
 
 intro
 install
 run
 guide/index
-theory/index
 changelog
 ref/bib
 ```

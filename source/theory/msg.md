@@ -7,23 +7,29 @@ Inspired by the fundamental role of the gene for an organism’s growth and deve
 
 # 5.2 SG for 3D Structures
 
-![image](_resources/3bfc2d728a44ae1049607f5c5b35984e_MD5.jpg)
+:::{figure-md}
+![](../_static/3bfc2d728a44ae1049607f5c5b35984e_MD5.jpg)
 
-Figure 3: Analysis of 3D heterogeneous structures approximated by a constitutive modeling over an SG and a corresponding 3D macroscopic structural analysis.
+Analysis of 3D heterogeneous structures approximated by a constitutive modeling over an SG and a corresponding 3D macroscopic structural analysis.
+:::
 
 As shown in Figure 3, analyses of 3D heterogeneous structures can be approximated by a 3D macroscopic structural analysis with the material properties provided by a constitutive modeling of an SG. For 3D structures, SG serves a similar role as the representative volume element (RVE) in micromechanics. However, they are significantly different so that the new term, SG, is used to avoid confusion. For example, for a structure made of composites featuring 1D heterogeneity (e.g. composite laminates made of layers with different orientations, Figure 3a), the SG will be the transverse normal line with segments denoting the corresponding layers. One can mathematically repeat this line in-plane to build the composite laminate. One possible application of 1D SG for 3D structures is to compute the effective 3D properties of a composite laminate. The constitutive modeling over the 1D SG can compute the complete set of 3D properties and local fields. Such applications of SG are not equivalent to RVE. For a structure made of composites featuring 2D heterogeneity (e.g. continuous unidirectional fiber reinforced composites, Figure 3b), the SG will be 2D. Although 2D RVEs are also used in micromechanics, only in-plane properties and in-plane local fields can be obtained from common RVE-based models. If the complete set of properties are needed for the 3D structural analysis, a 3D RVE is usually required [7], while a 2D domain is sufficient if it is modeled using SG-based models (Figure 3b). For a structure made of composites featuring 3D heterogeneity (e.g. textile composites, Figure 3c), the SG will be a 3D volume. Although a 3D SG for 3D structures represents the most similar case to RVE, boundary conditions in terms of displacements and tractions indispensable in RVE-based models are not needed for SG-based models. 
 
 # 5.3 SG for Dimensionally Reducible Structures
 
-![image](_resources/f4e7e6cf8ce3f5e83616ee75a7715c2c_MD5.jpg)
+:::{figure-md}
+![](../_static/f4e7e6cf8ce3f5e83616ee75a7715c2c_MD5.jpg)
 
-Figure 4: Analysis of beam-like structures approximated by a constitutive modeling over an SG and a corresponding 1D beam analysis.
+Analysis of beam-like structures approximated by a constitutive modeling over an SG and a corresponding 1D beam analysis.
+:::
 
 SG also allows direct connection of microstructure with the beam/plate/shell analyses. For example, the structural analysis of slender (beam-like) structures can use beam elements (Figure 4). If the beam has uniform cross-sections which could be made of isotropic homogeneous materials or anisotropic heterogeneous materials (Figure 4a), its SG is the 2D cross-sectional domain because the cross-section can be projected along the beam reference line to form the beam-like structure. This inspires a new perspective toward beam modeling, a traditional branch of structural mechanics. If the beam reference line is considered as a general 1D continuum, every material point of this continuum has a cross-section as its microstructure. In other words, constitutive modeling for beams can be effectively viewed as an application of micromechanics. If the beam is also heterogeneous in the spanwise direction (Figure 4b), a 3D SG is needed to describe the microstructure of the 1D continuum, the behavior of which is governed by the 1D beam analysis. The constitutive modeling over an SG should compute the beam stiffness for the beam analysis, and also the complete 3D displacement, stress, and strain fields within the original structure. The concept of SG provides a unified treatment of structural modeling and micromechanics modeling and enables us to collapse the cross-section or a 3D beam segment into a material point for a beam analysis over the reference line with a possible, fully populated stiffness matrix simultaneously accounting for all the deformation modes of a certain model such as the Euler-Bernoulli beam model (extension, torsion, and bending in two directions) or the Timoshenko beam model (extension, torsion, bending in two directions, and shear in two directions). The beam model constructed this way can easily handle buildup structures as long as their external contours look like a beam such as high aspect ratio wings, or as long as the analyst wants to model a slender structure using a beam element. 
 
-![image](_resources/b47c82227d6f7d83ebbf110ab552eb26_MD5.jpg)
+:::{figure-md}
+![](../_static/b47c82227d6f7d83ebbf110ab552eb26_MD5.jpg)
 
-Figure 5: Analysis of plate-like structures approximated by a constitutive modeling over SG and a corresponding 2D plate analysis.
+Analysis of plate-like structures approximated by a constitutive modeling over SG and a corresponding 2D plate analysis.
+:::
 
 If the structural analysis uses plate/shell elements, SG can also be chosen properly. For illustrative purpose, typical SGs of plate-like structures are sketched in Figure 5. If the plate-like structures feature no in-plane heterogeneities (in other words, the structure is a laminate made of homogeneous layers) (Figure 5a), the SG is the transverse normal line with each segment denoting the corresponding layer. For a sandwich panel with a core corrugated in one direction (Figure 5b), the SG is 2D. If the panel is heterogeneous in both in-plane directions (Figure 5c), such as a stiffened panel with stiffeners running in both directions or a panel made of 3D textile composites, the SG is 3D. Despite the different dimensionalities of the SGs, the constitutive modeling should compute structural properties for the corresponding structural analysis (such as the $A$ , $B$ , and $D$ matrices for the Kirchhoff-Love plate model) and relations to express the original 3D fields in terms of the global behavior (e.g. moments, curvatures, etc.) obtained from the plate/shell analysis. It is known that theories of plates/shells traditionally belong to structural mechanics, but the constitutive modeling of these structures can be treated as special micromechanics applications using the SG concept. For a plate/shell-like structure, if the reference surface is considered as a general 2D continuum, every material point of this continuum has an associated SG as its microstructure. Plate/shell models constructed using the SG concept can handle buildup structures as long as their external contours look like plates or shells or we want to model a structure using plate or shell elements. 
 
@@ -33,9 +39,11 @@ SG serves as the link between the original structure with microscopic details an
 
 For some applications, the local periodicity assumption may not be valid. In other words, SG cannot be considered as a point in the macroscopic analysis. To remove this assumption, SwiftCompTM 2.1 added the capability for performing constitutive modeling of a SG meshed with many 3D elements to be a single, homogeneous 3D 8-node or 20-node element. SwiftCompTM will perform homogenization of the SG to obtain the effective element stiffness matrix for the homogeneous element, which can used as input for the macroscopic structural analysis using the homogeneous element. The macroscopic analysis will compute the nodal values of the homogeneous element which can be used as input for SwiftCompTM to perform dehomogenization to compute the 3D fields (displacements/stresses/strains) within the SG. It is noted that the macroscopic structural analysis using homogeneous elements can be handled by FEA codes which allow users to define their own element type such as the Abaqus UEL subroutine. The basic idea is illustrated in Figure 6. 
 
-![image](_resources/634cda3f0ad7e319322c1b5aa256022a_MD5.jpg)
+:::{figure-md}
+![](../_static/634cda3f0ad7e319322c1b5aa256022a_MD5.jpg)
 
-Figure 6: The basic idea of constitutive modeling of a block of 3D elements to be a single 3D element.
+The basic idea of constitutive modeling of a block of 3D elements to be a single 3D element.
+:::
 
 # 5.4 MSG-based Multiscale Structural Modeling
 
@@ -43,8 +51,11 @@ The multiscale structural modeling approach based on MSG can be used to fill the
 
 As shown in Figure 7, MSG starts from the original model formulated in terms of 3D continuum mechanics. We first identify SG for a structure, then use the principle of minimum information loss (PMIL) to decouple the original problem to a constitutive modeling over the SG and a structural analysis. The constitutive modeling has been implemented in SwiftComp $^ \mathrm { r } \mathrm { { 1 1 } } \mathrm { { M } }$ for computing the effective properties needed in the structural analysis and local fields within the original structure. The structural analysis can be formulated as a geometrically exact continuum theory and all the approximations are confined in the constitutive modeling, accuracy of which is guaranteed to be the best by PMIL. 
 
-![image](_resources/be485524e04f25c2529d1e2dc2f39b66_MD5.jpg)
-Figure 7: Work flow of MSG-based multiscale modeling.
+:::{figure-md}
+![](../_static/be485524e04f25c2529d1e2dc2f39b66_MD5.jpg)
+
+Workflow of MSG-based multiscale modeling.
+:::
 
 As the macroscopic structural analysis can be easily handled by standard FEA software packages, this MSG-based multiscale structural modeling approach enables these FEA software packages to model composites as a black aluminum in the macroscopic structural analysis with minimized loss of accuracy. But this “black aluminum” is a 1D (beam), 2D (plate/shell), or 3D (solid) continuum featuring general anisotropic constitutive relations, not an isotropic material as traditionally implied by this commonly used term. The unique features of this multiscale modeling approach based on MSG and its companion code SwiftCompTM are: 
 

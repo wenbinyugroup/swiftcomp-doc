@@ -44,9 +44,14 @@ bibtex_bibfiles = ['refs.bib']
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'sphinx_book_theme'
+# html_theme = 'sphinx_book_theme'
+html_theme = 'pydata_sphinx_theme'
+
 html_title = 'SwiftComp Manual'
 html_static_path = ['_static']
+html_css_files = [
+    'custom.css',
+]
 html_theme_options = {
     # 'site_url': 'https://wenbinyugroup.github.io/sgio/',
     # 'repo_url': 'https://github.com/wenbinyugroup/sgio',
@@ -63,7 +68,7 @@ html_theme_options = {
     # # "use_issues_button": True,
     # # 'collapse_navigation': True,
     # 'navigation_depth': 4,
-    # "announcement": "Documentation is under construction.",
+    "announcement": "Documentation is under construction.",
 }
 
 myst_enable_extensions = [
